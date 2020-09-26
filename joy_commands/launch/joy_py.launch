@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<launch>
+
+ <!-- joy node -->
+  <node pkg="joy" type="joy_node" name="turtle_joy" >
+    <!--<param name="dev" type="string" value="/dev/input/js0" />
+    <param name="deadzone" value="0.12" /> -->
+  </node>
+
+ <!-- Axes -->
+  <node pkg="joy_commands" type="teleop_joy_py.py" name="teleop"/>
+
+</launch>
+

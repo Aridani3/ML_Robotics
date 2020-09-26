@@ -1,0 +1,10 @@
+<launch>
+
+  <node pkg="floor_plane_regression" type="floor_plane_regression" name="floor_plane_regression" output="screen">
+      launch-prefix="xterm -e gdb --args"
+      <param name="base_frame" value="/bubbleRob" />
+      <param name="max_range" value="3.0" />
+
+      <remap from="/floor_plane_regression/scans" to="/depth_registered/points"/>
+  </node>
+</launch>

@@ -1,0 +1,19 @@
+<launch>
+
+  <node pkg="floor_plane_hough" type="floor_plane_hough" name="floor_plane_hough" output="screen">
+      launch-prefix="xterm -e gdb --args"
+      <param name="base_frame" value="/bubbleRob" />
+      <param name="max_range" value="2.0" />
+      <param name="n_a" value="21" />
+      <param name="a_min" value="-1.0" />
+      <param name="a_max" value="1.0" />
+      <param name="n_b" value="21" />
+      <param name="b_min" value="-1.0" />
+      <param name="b_max" value="1.0" />
+      <param name="n_c" value="21" />
+      <param name="c_min" value="-1.0" />
+      <param name="c_max" value="1.0" />
+
+      <remap from="/floor_plane_hough/scans" to="/depth_registered/points"/>
+  </node>
+</launch>
