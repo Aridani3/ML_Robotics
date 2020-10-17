@@ -9,23 +9,20 @@ using namespace floor_nav;
 
 TaskIndicator TaskSetHeading::initialise() 
 {
+    ROS_INFO("Setting heading to %.2f deg", cfg.target*180./M_PI);
     if (cfg.relative) {
-        geometry_msgs::Pose2D tpose = env->getPose2D();
-        if (fabs(cfg.target) > M_PI) {
-            ROS_WARN("Relative target (%.2f deg) larger than PI", cfg.target*180./M_PI);
-        }
-        target = remainder(tpose.theta + cfg.target,2*M_PI);
+        const geometry_msgs::Pose2D & tpose = env->getPose2D();
+        initial_heading = tpose.theta;
     } else {
-        target = cfg.target;
+        initial_heading = 0.0;
     }
-    ROS_INFO("Setting heading to %.2f deg", target*180./M_PI);
     return TaskStatus::TASK_INITIALISED;
 }
 
 TaskIndicator TaskSetHeading::iterate()
 {
-    geometry_msgs::Pose2D tpose = env->getPose2D();
-    double alpha = remainder(target-tpose.theta,2*M_PI);
+    const geometry_msgs::Pose2D & tpose = env->getPose2D();
+    double alpha = remainder(initial_heading+cfg.target-tpose.theta,2*M_PI);
     if (fabs(alpha) < cfg.angle_threshold) {
 		return TaskStatus::TASK_COMPLETED;
     }

@@ -10,6 +10,8 @@ using namespace task_manager_lib;
 namespace floor_nav {
     class TaskGoTo : public TaskInstance<TaskGoToConfig,SimTasksEnv>
     {
+        protected:
+            double x_init,y_init;
         public:
             TaskGoTo(TaskDefinitionPtr def, TaskEnvironmentPtr env) : Parent(def,env) {}
             virtual ~TaskGoTo() {};

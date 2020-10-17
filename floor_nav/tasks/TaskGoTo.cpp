@@ -14,6 +14,14 @@ using namespace floor_nav;
 TaskIndicator TaskGoTo::initialise() 
 {
     ROS_INFO("Going to %.2f %.2f",cfg.goal_x,cfg.goal_y);
+    if (cfg.relative) {
+        const geometry_msgs::Pose2D & tpose = env->getPose2D();
+        x_init = tpose.x;
+        y_init = tpose.y;
+    } else {
+        x_init = 0.0;
+        y_init = 0.0;
+    }
     return TaskStatus::TASK_INITIALISED;
 }
 
@@ -21,11 +29,11 @@ TaskIndicator TaskGoTo::initialise()
 TaskIndicator TaskGoTo::iterate()
 {
     const geometry_msgs::Pose2D & tpose = env->getPose2D();
-    double r = hypot(cfg.goal_y-tpose.y,cfg.goal_x-tpose.x);
+    double r = hypot(y_init + cfg.goal_y-tpose.y,x_init + cfg.goal_x-tpose.x);
     if (r < cfg.dist_threshold) {
 		return TaskStatus::TASK_COMPLETED;
     }
-    double alpha = remainder(atan2((cfg.goal_y-tpose.y),cfg.goal_x-tpose.x)-tpose.theta,2*M_PI);
+    double alpha = remainder(atan2((y_init + cfg.goal_y-tpose.y),x_init + cfg.goal_x-tpose.x)-tpose.theta,2*M_PI);
 #ifdef DEBUG_GOTO
     printf("c %.1f %.1f %.1f g %.1f %.1f r %.3f alpha %.1f\n",
             tpose.x, tpose.y, tpose.theta*180./M_PI,

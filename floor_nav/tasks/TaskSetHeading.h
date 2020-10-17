@@ -10,8 +10,8 @@ using namespace task_manager_lib;
 namespace floor_nav {
     class TaskSetHeading : public TaskInstance<TaskSetHeadingConfig,SimTasksEnv>
     {
-        protected:
-            double target;
+        protected: 
+            double initial_heading;
         public:
             TaskSetHeading(TaskDefinitionPtr def, TaskEnvironmentPtr env) : Parent(def,env) {}
             virtual ~TaskSetHeading() {};

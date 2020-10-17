@@ -1,0 +1,37 @@
+{
+    "configurations": [
+        {
+            "browse": {
+                "databaseFilename": "",
+                "limitSymbolsToIncludedHeaders": true
+            },
+            "includePath": [
+                "/home/ayoub/catkin_ws/devel/include/**",
+                "/opt/ros/melodic/include/**",
+                "/home/ayoub/minimal_kingfisher/devel/include/**",
+                "/home/ayoub/catkin_ws/src/floor_nav/include/**",
+                "/home/ayoub/catkin_ws/src/floor_plane_mapping/include/**",
+                "/home/ayoub/minimal_kingfisher/src/heron_controller/include/**",
+                "/home/ayoub/minimal_kingfisher/src/heron_drive/include/**",
+                "/home/ayoub/minimal_kingfisher/src/heron_velocity/include/**",
+                "/home/ayoub/catkin_ws/src/joy_commands/include/**",
+                "/home/ayoub/catkin_ws/src/ros_task_manager/src/task_manager_action/include/**",
+                "/home/ayoub/catkin_ws/src/ros_task_manager/src/task_manager_lib/include/**",
+                "/home/ayoub/catkin_ws/src/ros_task_manager/src/task_manager_sync/include/**",
+                "/home/ayoub/minimal_kingfisher/src/uuv_simulator/uuv_gazebo_plugins/uuv_gazebo_plugins/include/**",
+                "/home/ayoub/minimal_kingfisher/src/uuv_simulator/uuv_gazebo_plugins/uuv_gazebo_ros_plugins/include/**",
+                "/home/ayoub/minimal_kingfisher/src/uuv_simulator/uuv_sensor_plugins/uuv_sensor_ros_plugins/include/**",
+                "/home/ayoub/minimal_kingfisher/src/uuv_simulator/uuv_world_plugins/uuv_world_plugins/include/**",
+                "/home/ayoub/minimal_kingfisher/src/uuv_simulator/uuv_world_plugins/uuv_world_ros_plugins/include/**",
+                "/home/ayoub/catkin_ws/src/vrep4_helpers/include/**",
+                "/usr/include/**"
+            ],
+            "name": "ROS",
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu11",
+            "cppStandard": "gnu++14"
+        }
+    ],
+    "version": 4
+}

@@ -1,0 +1,17 @@
+<launch>
+
+  <node pkg="nodelet" type="nodelet" name="nodelet_manager" output="screen" respawn="false" args="manager"/>
+
+  <node pkg="nodelet" type="nodelet" name="depth_to_pc" args="load depth_image_proc/point_cloud_xyzrgb nodelet_manager" respawn="false">
+    <remap from="rgb/image_rect_color" to="/vrep/visionSensor"/>
+    <remap from="depth_registered/image_rect" to="/vrep/depthSensor_flipped"/>
+    <remap from="rgb/camera_info" to="/vrep/visionSensorInfo"/>
+  </node>
+
+
+  <node pkg="vrep4_helpers" type="image_flip" name="image_flip" output="screen">
+      <remap from="image" to="/vrep/depthSensor"/>
+      <remap from="image_flipped" to="/vrep/depthSensor_flipped"/>
+  </node>
+
+</launch>

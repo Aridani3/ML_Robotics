@@ -15,8 +15,8 @@ rospy.sleep(1.0);
 ma = MarkerArray()
 now = rospy.Time.now()
 
-print get_pkg_dir('floor_graph')+"/graph.picklez"
-g = ig.Graph.Read_Picklez(get_pkg_dir('floor_graph')+"/graph.picklez")
+print get_pkg_dir('floor_graph')+"/graph.picklez.gz"
+g = ig.Graph.Read_Picklez(get_pkg_dir('floor_graph')+"/graph.picklez.gz")
 id = 0
 for v in g.vs:
     marker = Marker()
