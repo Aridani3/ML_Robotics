@@ -23,6 +23,9 @@ while True:
         node_seq = [2, 1, 4, 3, 5, 6, 0, 9, 8, 10, 7, 11, 10, 9, 0]
         for node in node_seq:
             tc.GoTo(goal_x=g.vs[node]["x"],goal_y=g.vs[node]["y"], max_velocity=0.5, k_v=1.0, max_angular_velocity=1.0)
+	    for angle in [pi/2]*4:
+                #tc.Wait(duration=1.0)
+                tc.SetHeading(target=angle, relative=True, max_angular_velocity=1.0)
         tc.Wait(duration=1.0)
 
     except TaskException, e:
