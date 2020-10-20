@@ -195,22 +195,16 @@ class FloorPlaneRansac {
                             counter2 += 1;
                         }
                     }
-                    if ((counter > 0.4*n_not_floor) && (counter >= 0.99*counter2) && (r > 0.05) && (r < 0.15)) {// && (X_cylinder[2] > 0.05) && (X_cylinder[2] < 0.15)) {
+                    if ((counter > 0.4*n_not_floor) && (counter == counter2) && (r > 0.05) && (r < 0.15)) {// && (X_cylinder[2] > 0.05) && (X_cylinder[2] < 0.15)) {
                         best = counter;
                         X_cylinder[0] = a;
                         X_cylinder[1] = b;
                         X_cylinder[2] = r;
                     }
-                    if (counter > best2) {
-                        best2 = counter2;
-                    }
                     
                 }
             }
-            ROS_INFO("Best score %d", (int)best2);
             if (best > 0) {
-                ROS_INFO("Cylinder detected");
-                ROS_INFO("Equation of the cylinder: %.2f^2 = (x-%.2f)^2 + (y-%.2f)^2", X_cylinder[2], X_cylinder[0], X_cylinder[1]);
                 bool add = true;
                 for (unsigned int m=0;m<(unsigned)cylinders_a.size();m++) {
                     if (pow(cylinders_a[m]-X_cylinder[0],2) + pow(cylinders_b[m] - X_cylinder[1], 2)+ pow(cylinders_r[m] - X_cylinder[2], 2) < 0.5) {
@@ -218,20 +212,22 @@ class FloorPlaneRansac {
                     }
                 }
                 if (add == true) {
+                    ROS_INFO("New cylinder detected");
+                    ROS_INFO("Equation of the cylinder: %.2f^2 = (x-%.2f)^2 + (y-%.2f)^2", X_cylinder[2], X_cylinder[0], X_cylinder[1]);
                     cylinders_a.push_back(X_cylinder[0]);
                     cylinders_b.push_back(X_cylinder[1]);
                     cylinders_r.push_back(X_cylinder[2]);
                 }
 
             } else {
-                ROS_INFO("No cylinder detected");
+                ROS_INFO("No new cylinder detected");
             }
             // End cylinder detection
 
             // Cylinder detected
-            ROS_INFO("Cylinders detected:");
+            ROS_INFO("Cylinders detected for now:");
             for (unsigned int mm=0;mm<(unsigned)cylinders_a.size();mm++) {
-                ROS_INFO("%.2f, %.2f, %.2f", cylinders_a[mm], cylinders_b[mm], cylinders_r[mm]);
+                ROS_INFO("Equation: %.2f^2 = (x-%.2f)^2 + (y-%.2f)^2", cylinders_r[mm], cylinders_a[mm], cylinders_b[mm]);
             // End cylinder detected
 
             Eigen::Vector3f O,u,v,w;
