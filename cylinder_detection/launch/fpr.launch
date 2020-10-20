@@ -6,9 +6,9 @@
       <param name="base_frame" value="/world" />
       <param name="robot_frame" value="/bubbleRob" />
       <param name="max_range" value="2.0" />
-      <param name="n_samples" value="10000" />
+      <param name="n_samples" value="8000" />
 
-      <param name="tolerance" value="0.005" />
+      <param name="tolerance" value="0.004" />
       <remap from="/cylinder_detection/scans" to="/depth_registered/points"/>
   </node>
 </launch>
