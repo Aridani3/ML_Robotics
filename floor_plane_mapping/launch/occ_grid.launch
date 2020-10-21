@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <launch>
 
-  <node pkg="floor_plane_mapping" type="floor_mapping" name="floor_mapping" output="screen">
+  <node pkg="floor_plane_mapping" type="traversability_occgrid" name="traversability_occgrid" output="screen">
       launch-prefix="xterm -e gdb --args"
       <param name="base_frame" value="/world" />
       <param name="robot_frame" value="/bubbleRob" />
       <param name="max_range" value="3.0" />
-      <param name="grid_size" value="0.05" />
-      <param name="grid_max_points" value="1000" />
+      <param name="grid_size" value="0.1" />
       <param name="beta" value="100" />
+      <param name="gama" value="10" />
 
-      <remap from="/floor_mapping/scans" to="/depth_registered/points"/>
+      <remap from="/traversability_occgrid/scans" to="/depth_registered/points"/>
   </node>
 
 </launch>

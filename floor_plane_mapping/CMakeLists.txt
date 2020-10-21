@@ -139,7 +139,7 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(floor_mapping src/floor_mapping.cpp)
-
+add_executable(traversability_occgrid src/traversability_occgrid.cpp)
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -152,6 +152,9 @@ add_executable(floor_mapping src/floor_mapping.cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(floor_mapping
+  ${OpenCV_LIBRARIES} ${catkin_LIBRARIES}
+)
+target_link_libraries(traversability_occgrid
   ${OpenCV_LIBRARIES} ${catkin_LIBRARIES}
 )
 
