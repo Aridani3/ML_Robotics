@@ -15,14 +15,21 @@ class FloorPlaneRansac {
         ros::Subscriber scan_sub_;
         ros::Publisher marker_pub_;
         tf::TransformListener listener_;
+        tf::TransformListener listener_robot_;
 
         ros::NodeHandle nh_;
         std::string base_frame_;
+        std::string robot_frame_;
         double max_range_;
         double tolerance;
-        int n_samples; 
+        int n_samples;
 
         pcl::PointCloud<pcl::PointXYZ> lastpc_;
+        pcl::PointCloud<pcl::PointXYZ> robotpc_;
+
+        std::vector<double> cylinders_a;
+        std::vector<double> cylinders_b;
+        std::vector<double> cylinders_r;
 
     protected: // ROS Callbacks
 
@@ -33,6 +40,8 @@ class FloorPlaneRansac {
             listener_.waitForTransform(base_frame_,msg->header.frame_id,msg->header.stamp,ros::Duration(1.0));
             pcl_ros::transformPointCloud(base_frame_,msg->header.stamp, temp, msg->header.frame_id, lastpc_, listener_);
 
+            listener_robot_.waitForTransform(robot_frame_,msg->header.frame_id,msg->header.stamp,ros::Duration(1.0));
+            pcl_ros::transformPointCloud(robot_frame_,msg->header.stamp, temp, msg->header.frame_id, robotpc_, listener_robot_);
             //
             unsigned int n = temp.size();
             std::vector<size_t> pidx;
@@ -45,8 +54,8 @@ class FloorPlaneRansac {
                     // Bogus point, ignore
                     continue;
                 }
-                x = lastpc_[i].x;
-                y = lastpc_[i].y;
+                x = robotpc_[i].x;
+                y = robotpc_[i].y;
                 d = hypot(x,y);
                 if (d > max_range_) {
                     // too far, ignore
@@ -59,6 +68,7 @@ class FloorPlaneRansac {
 
             n = pidx.size();
             size_t best = 0;
+            size_t best2 = 0;
             double X[3] = {0,0,0};
             ROS_INFO("%d useful points out of %d",(int)n,(int)temp.size());
 
@@ -119,6 +129,7 @@ class FloorPlaneRansac {
 
             // Find the cylinder
             best = 0;
+            best2 = 0;
             double X_cylinder[3] = {0,0,0};
 
             if (n_not_floor > 10) {
@@ -177,14 +188,14 @@ class FloorPlaneRansac {
                     for (unsigned int m=0;m<(unsigned)n_not_floor;m++) {
                         Eigen::Vector3f M; M << lastpc_[pidx_not_floor[m]].x, lastpc_[pidx_not_floor[m]].y, lastpc_[pidx_not_floor[m]].z;
                         float distance = abs(pow(r,2) - pow((M(0)-a),2) - pow((M(1)-b),2));
-                        if (abs(distance) < tolerance) {
+                        if (distance < tolerance) {
                             counter += 1;
                         }
-                        if ((distance > tolerance) && (distance < 5*tolerance)) {
+                        if (distance < 5*tolerance) {
                             counter2 += 1;
                         }
                     }
-                    if ((counter == n_not_floor) && (counter2 == 0)) {
+                    if ((counter > 0.4*n_not_floor) && (counter == counter2) && (r > 0.05) && (r < 0.15)) {// && (X_cylinder[2] > 0.05) && (X_cylinder[2] < 0.15)) {
                         best = counter;
                         X_cylinder[0] = a;
                         X_cylinder[1] = b;
@@ -194,17 +205,35 @@ class FloorPlaneRansac {
                 }
             }
             if (best > 0) {
-                ROS_INFO("Cylinder detected");
-                ROS_INFO("Equation of the cylinder: %.2f^2 = (x-%.2f)^2 + (y-%.2f)^2", X_cylinder[2], X_cylinder[0], X_cylinder[1]);
+                bool add = true;
+                for (unsigned int m=0;m<(unsigned)cylinders_a.size();m++) {
+                    if (pow(cylinders_a[m]-X_cylinder[0],2) + pow(cylinders_b[m] - X_cylinder[1], 2)+ pow(cylinders_r[m] - X_cylinder[2], 2) < 0.5) {
+                        add = false;
+                    }
+                }
+                if (add == true) {
+                    ROS_INFO("New cylinder detected");
+                    ROS_INFO("Equation of the cylinder: %.2f^2 = (x-%.2f)^2 + (y-%.2f)^2", X_cylinder[2], X_cylinder[0], X_cylinder[1]);
+                    cylinders_a.push_back(X_cylinder[0]);
+                    cylinders_b.push_back(X_cylinder[1]);
+                    cylinders_r.push_back(X_cylinder[2]);
+                }
+
             } else {
-                ROS_INFO("No cylinder detected");
+                ROS_INFO("No new cylinder detected");
             }
             // End cylinder detection
+
+            // Cylinder detected
+            ROS_INFO("Cylinders detected for now:");
+            for (unsigned int mm=0;mm<(unsigned)cylinders_a.size();mm++) {
+                ROS_INFO("Equation: %.2f^2 = (x-%.2f)^2 + (y-%.2f)^2", cylinders_r[mm], cylinders_a[mm], cylinders_b[mm]);
+            // End cylinder detected
 
             Eigen::Vector3f O,u,v,w;
             w << 0.0, 0.0, 1.0; //X[0], X[1], -1.0;
             w /= w.norm();
-            O << X_cylinder[0], X_cylinder[1], 0.0; //1.0, 0.0, 1.0*X[0]+0.0*X[1]+X[2];
+            O << cylinders_a[mm], cylinders_b[mm], 0.0;//X_cylinder[0], X_cylinder[1], 0.0; //1.0, 0.0, 1.0*X[0]+0.0*X[1]+X[2];
             u << 1.0, 0.0, 0.0; //2.0, 0.0, 2.0*X[0]+0.0*X[1]+X[2];
             //u -= O;
             u /= u.norm();
@@ -220,15 +249,15 @@ class FloorPlaneRansac {
             m.header.stamp = msg->header.stamp;
             m.header.frame_id = base_frame_;
             m.ns = "cylinder_detector";
-            m.id = 1;
+            m.id = mm;
             m.type = visualization_msgs::Marker::CYLINDER;
             m.action = visualization_msgs::Marker::ADD;
             m.pose.position.x = O(0);
             m.pose.position.y = O(1);
             m.pose.position.z = 0.0;//O(2);
             tf::quaternionTFToMsg(Q,m.pose.orientation);
-            m.scale.x = X_cylinder[2]; //1.0;
-            m.scale.y = X_cylinder[2]; //1.0;
+            m.scale.x = cylinders_r[mm];//X_cylinder[2]; //1.0;
+            m.scale.y = cylinders_r[mm];//X_cylinder[2]; //1.0;
             m.scale.z = 2.0;
             m.color.a = 0.5;
             m.color.r = 1.0;
@@ -236,12 +265,13 @@ class FloorPlaneRansac {
             m.color.b = 0.0;
 
             marker_pub_.publish(m);
-            
+            }
         }
 
     public:
         FloorPlaneRansac() : nh_("~") {
-            nh_.param("base_frame",base_frame_,std::string("/body"));
+            nh_.param("base_frame",base_frame_,std::string("/world"));
+            nh_.param("robot_frame",robot_frame_,std::string("/bubbleRob"));
             nh_.param("max_range",max_range_,5.0);
             nh_.param("n_samples",n_samples,1000);
             nh_.param("tolerance",tolerance,1.0);
