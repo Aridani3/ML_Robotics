@@ -60,7 +60,7 @@ class OccGridMapping {
 
         float lprobability(float angle, float d){
             float trav = traversable(angle);
-            float proba = trav * (0.9 - 0.4 * exp(-gama/(d+0.5))) + (1-trav) * (0.1 + 0.4 * exp(-gama/(d+0.5))); 
+            float proba = trav * (0.9 - 0.4 * exp(-gama/d)) + (1-trav) * (0.1 + 0.4 * exp(-gama/d)); 
             return log(proba / (1 - proba));
         }
 
