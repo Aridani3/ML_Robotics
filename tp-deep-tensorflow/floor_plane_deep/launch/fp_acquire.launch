@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<launch>
+
+    <node pkg="floor_plane_deep" type="floor_plane_extract" name="floor_plane_extract" output="screen">
+      launch-prefix="xterm -e gdb --args">
+      <param name="world_frame" value="/world" />
+      <param name="base_frame" value="/bubbleRob" />
+      <param name="max_range" value="3.0" />
+      <param name="thumb_size" value="32" />
+      <param name="out_dir" value="/tmp" />
+      <param name="height_threshold" value="0.05" />
+      <param name="min_displacement" value="0.1" />
+      <param name="min_rotation" value="0.1" />
+      <param name="max_image_per_type" value="4000" />
+      <param name="traversability_threshold" value="50" />
+
+      <remap from="/floor_plane_extract/pointcloud" to="/depth_registered/points"/>
+      <remap from="/floor_plane_extract/image" to="/vrep/visionSensor"/>
+      <remap from="/floor_plane_extract/info" to="/vrep/visionSensorInfo"/>
+  </node>
+</launch>

@@ -1,0 +1,10 @@
+<launch>
+
+    <node pkg="floor_plane_deep" type="floor_plane_classifier.py" name="floor_plane_classifier" output="screen">
+      <param name="model_file" value="$(find floor_plane_deep)/models/best_model" />
+      <param name="meta_file" value="$(find floor_plane_deep)/models/best_model.meta" />
+      <param name="thumb_size" value="32" />
+
+      <remap from="/floor_plane_classifier/image" to="/vrep/visionSensor"/>
+  </node>
+</launch>
