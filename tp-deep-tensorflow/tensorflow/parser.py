@@ -46,7 +46,7 @@ class ParseArgs():
             os.mkdir(self.model_dir)
             os.mkdir(self.tensorboard_dir)
         except:
-            raise ValueError('Could not create directory at: ', args.output, ' check that a directory with the same name doesn\'t already exist or that the parent directory exists.')
+            raise ValueError("Could not create directory at: ", args.output,  "check that a directory with the same name doesn't already exist or that the parent directory exists.")
         self.lr = args.learning_rate
         self.max_iter = args.iter
         self.num_class = args.classes

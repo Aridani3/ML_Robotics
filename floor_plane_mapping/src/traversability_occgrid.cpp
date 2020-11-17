@@ -98,7 +98,7 @@ class OccGridMapping {
             }
 
             n = pidx.size(); 
-            ROS_INFO("%d useful points out of %d",(int)n,(int)temp.size());
+            //ROS_INFO("%d useful points out of %d",(int)n,(int)temp.size());
 
             M.clear();
 
@@ -143,9 +143,9 @@ class OccGridMapping {
                     }    
 
                     float angle = atan2(max_point - min_point, 0.1);
-                    ROS_INFO("lprobability %d", lprobability_map(coord.x, coord.y));
+                    //ROS_INFO("lprobability %d", lprobability_map(coord.x, coord.y));
                     lprobability_map(coord.x, coord.y) = lprobability_map(coord.x, coord.y) + lprobability(angle, d)*127/2.5;
-                    ROS_INFO("lprobability: %f --> %d", lprobability(angle, d), lprobability_map(coord.x, coord.y));
+                    //ROS_INFO("lprobability: %f --> %d", lprobability(angle, d), lprobability_map(coord.x, coord.y));
                     traversability_map(coord.x, coord.y) = (1 - ( 1 / (1 + exp(lprobability_map(coord.x, coord.y)*2.5/127)))) * 255;
                     //traversability_map(coord.x, coord.y) = traversable(angle) * 255;
                 }

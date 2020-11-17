@@ -10,7 +10,7 @@
       <param name="base_frame" value="/world" />
       <param name="robot_frame" value="/bubbleRob" />
       <param name="max_range" value="3.0" />
-      <param name="grid_size" value="0.1" />
+      <param name="grid_size" value="0.05" />
       <param name="beta" value="100" />
       <param name="gama" value="10" />
 
@@ -33,7 +33,7 @@
 
 
   <!-- Rviz -->
-  <node type="rviz" name="rviz" pkg="rviz" args="-d /home/ayoub/catkin_ws/project1.rviz" />
+  <node type="rviz" name="rviz" pkg="rviz" args="-d $(floor_plane_mapping)/project1.rviz" />
 
   <!-- image_view -->
   <node name="image_view" pkg="image_view" type="image_view" respawn="false" output="screen">

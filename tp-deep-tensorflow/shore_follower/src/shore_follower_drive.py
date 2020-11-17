@@ -45,7 +45,15 @@ class ShoreFollowerDrive:
         res = self.sess_.run('predictions:0',feed_dict={'is_training:0':False,'drop_prob:0':0.0,'source:0':img})[0]
         # Makes sure that the shape of the network matches the required shape
         assert(res.shape[0] == 3)
-        print("%5.2f %5.2f %5.2f" %(res[0],res[1],res[2]))
+        # Using the output of the network the robot is only able to loop around the inner shore anti clock wise (when the robot is already along the shore)
+        print("%5.2f %5.2f %5.2f" %(res[0],res[1],res[2])) 
+        # The network never suggest to turn left, so we can't loop clock wise and to loop anti clock wise the robot has to already be along the shore
+        res[0] /= 3 # Dividing the first value of res by three allows to loop around the inner shore anti clock wise
+        res = res*(res==np.amax(res))/np.amax(res)
+
+        out.linear.x = res[0] * linear_vel_
+        out.angular.z = (res[1]-res[2]) * twist_factor_
+        print("x", out.linear.x, "y", out.linear.y, "z", out.linear.z, "ax", out.angular.x, "ay", out.angular.y, "az", out.angular.z)
         #TODO: Use the network output so the robot can drive around the lake
         # returns a geometry_msgs.Twist
         return out

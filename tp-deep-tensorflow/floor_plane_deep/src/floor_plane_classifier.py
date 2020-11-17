@@ -55,6 +55,11 @@ class FloorPlaneClassifier:
         res = self.sess_.run('predictions:0',feed_dict={'is_training:0':False,'drop_prob:0':0.0,'source:0':batch})
         # Makes sure that the output has the proper shape
         assert(res[0].shape[0] == 2)
+        print(res)
+        array = np.zeros((res.shape[0],3))
+        amax = np.argmax(res, axis=1)
+        for i in range(res.shape[0]):
+            array[i,int(amax[i])] = 255.0
         #TODO : Use network output to determine traversability (idealy levaraging vector-wise operation in numpy)
         # Returns a numpy array of dimension [res.shape[0],3]
         return array

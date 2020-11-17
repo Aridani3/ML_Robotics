@@ -6,7 +6,7 @@ from parser import ParseArgs
 from sampler import UniformSampler
 from reader import PNGReader
 from model import CNNModel
-from model import KerasModel
+#from model import KerasModel
 
 class Train:
     def __init__(self):

@@ -1,0 +1,2 @@
+model_checkpoint_path: "/home/raph/Documents/tmp3/nntest/models/best_model"
+all_model_checkpoint_paths: "/home/raph/Documents/tmp3/nntest/models/best_model"

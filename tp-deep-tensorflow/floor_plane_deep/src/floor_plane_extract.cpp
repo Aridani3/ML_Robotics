@@ -52,7 +52,7 @@ class FloorPlaneExtract {
         unsigned long image_counter_;
         unsigned long traversable_counter_;
         unsigned long untraversable_counter_;
-        int traversability_threshold;
+        int untraversability_threshold;
 
         bool has_info;
         double fx,fy,cx,cy;
@@ -68,29 +68,31 @@ class FloorPlaneExtract {
                 const cv::Mat_<float> & thumb_z) {
             // TODO: Modify this function to take a decision on the traversability of the patch of ground 
             // corresponding to this image.
-            int nan_counter(0);
-            int trav_points(0);
+            //int nan_counter(0);
+            int counter(0);
+            int untrav_points(0);
 
             for (int r=0;r<thumb_z.rows;r++) {
                 for (int c=0;c<thumb_z.cols;c++) {
                     if (std::isnan(thumb_z(r,c))) {
-                        nan_counter++;
+                        //nan_counter++;
                         // ignore this point, it has not been observed from the kinect
                         continue;
                     }
-                    if (thumb_z(r,c) < height_threshold_){
-                        trav_points++;
+                    counter++;
+                    if (thumb_z(r,c) > height_threshold_){
+                        untrav_points++;
                     }
                 }
             }
-            if (nan_counter > 0.5*thumb_z.rows*thumb_z.cols){
+            if (counter < 100){
                 //more than 50% of the thumb has not been observed
                 return UNUSABLE;
             }else{
-                if (trav_points > traversability_threshold){
-                    return TRAVERSABLE;
-                }else{
+                if (untrav_points > untraversability_threshold){
                     return UNTRAVERSABLE;
+                }else{
+                    return TRAVERSABLE;
                 }
             }
         }
@@ -142,8 +144,8 @@ class FloorPlaneExtract {
                     // Ignoring points too far out.
                     continue;
                 }
-                int ix = round(cx - x*fx/z);
-                int iy = round(cy - y*fy/z);
+                int ix = round(cx + x*fx/z);
+                int iy = round(cy + y*fy/z);
                 if ((ix < 0) || (ix >= img_z.cols) || (iy < 0) || (iy >= img_z.rows)) {
                     // Outside of the image. This is not possible, but may
                     // happen due to numerical uncertainties.
@@ -227,7 +229,7 @@ class FloorPlaneExtract {
             nh_.param("max_image_per_type",max_image_per_type_,1000);
             std::string transport = "raw";
             nh_.param("transport",transport,transport);
-            nh_.param("traversability_threshold",traversability_threshold,500);
+            nh_.param("untraversability_threshold",untraversability_threshold,500);
 
             // Reset label file
             char labelname[1024];

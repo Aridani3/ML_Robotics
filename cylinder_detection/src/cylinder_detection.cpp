@@ -70,7 +70,7 @@ class FloorPlaneRansac {
             size_t best = 0;
             size_t best2 = 0;
             double X[3] = {0,0,0};
-            ROS_INFO("%d useful points out of %d",(int)n,(int)temp.size());
+            //ROS_INFO("%d useful points out of %d",(int)n,(int)temp.size());
 
             unsigned int n_not_floor = 0;
             std::vector<size_t> pidx_not_floor;
@@ -125,7 +125,7 @@ class FloorPlaneRansac {
                     }
                 }
                 n_not_floor = pidx_not_floor.size();
-                ROS_INFO("Number of points outside the floor %d",(int)n_not_floor);
+                //ROS_INFO("Number of points outside the floor %d",(int)n_not_floor);
 
             // Find the cylinder
             best = 0;
@@ -212,22 +212,22 @@ class FloorPlaneRansac {
                     }
                 }
                 if (add == true) {
-                    ROS_INFO("New cylinder detected");
-                    ROS_INFO("Equation of the cylinder: %.2f^2 = (x-%.2f)^2 + (y-%.2f)^2", X_cylinder[2], X_cylinder[0], X_cylinder[1]);
+                    //ROS_INFO("New cylinder detected");
+                    //ROS_INFO("Equation of the cylinder: %.2f^2 = (x-%.2f)^2 + (y-%.2f)^2", X_cylinder[2], X_cylinder[0], X_cylinder[1]);
                     cylinders_a.push_back(X_cylinder[0]);
                     cylinders_b.push_back(X_cylinder[1]);
                     cylinders_r.push_back(X_cylinder[2]);
                 }
 
             } else {
-                ROS_INFO("No new cylinder detected");
+                //ROS_INFO("No new cylinder detected");
             }
             // End cylinder detection
 
             // Cylinder detected
-            ROS_INFO("Cylinders detected for now:");
+            //ROS_INFO("Cylinders detected for now:");
             for (unsigned int mm=0;mm<(unsigned)cylinders_a.size();mm++) {
-                ROS_INFO("Equation: %.2f^2 = (x-%.2f)^2 + (y-%.2f)^2", cylinders_r[mm], cylinders_a[mm], cylinders_b[mm]);
+                //ROS_INFO("Equation: %.2f^2 = (x-%.2f)^2 + (y-%.2f)^2", cylinders_r[mm], cylinders_a[mm], cylinders_b[mm]);
             // End cylinder detected
 
             Eigen::Vector3f O,u,v,w;
@@ -276,8 +276,8 @@ class FloorPlaneRansac {
             nh_.param("n_samples",n_samples,1000);
             nh_.param("tolerance",tolerance,1.0);
 
-            ROS_INFO("Searching for Plane parameter z = a x + b y + c");
-            ROS_INFO("RANSAC: %d iteration with %f tolerance",n_samples,tolerance);
+            //ROS_INFO("Searching for Plane parameter z = a x + b y + c");
+            //ROS_INFO("RANSAC: %d iteration with %f tolerance",n_samples,tolerance);
             assert(n_samples > 0);
 
             // Make sure TF is ready

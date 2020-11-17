@@ -66,5 +66,5 @@ class PNGReader:
         # Keep in mind that openCV is BGR, not RGB, the mean must be computed only
         # on the training set.
 
-        self.mean = #TODO
-        self.std = #TODO 
+        self.mean = np.mean(self.x_train)
+        self.std = np.std(self.x_train) 

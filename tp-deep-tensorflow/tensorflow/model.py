@@ -16,11 +16,11 @@ class CNNModel:
         "?" is an unknown dimension: in this case the size of the batch
         '''
         # TODO : set the height, width and channels so they match the reader settings
-        self.X           = tf.placeholder(tf.float32, [None, height, width, channels], name='source') 
-        self.Y           = tf.placeholder(tf.int64, [None], name='labels')
-        self.dropout     = tf.placeholder(tf.float32, name='drop_prob')
-        self.is_training = tf.placeholder(tf.bool, name='is_training')
-        self.step        = tf.placeholder(tf.int32, name='train_step')
+        self.X           = tf.compat.v1.placeholder(tf.float32, [None, height, width, channels], name='source') 
+        self.Y           = tf.compat.v1.placeholder(tf.int64, [None], name='labels')
+        self.dropout     = tf.compat.v1.placeholder(tf.float32, name='drop_prob')
+        self.is_training = tf.compat.v1.placeholder(tf.bool, name='is_training')
+        self.step        = tf.compat.v1.placeholder(tf.int32, name='train_step')
         '''
         REGULARIZATION: Norm using average of each channel and divide by std devition
         '''
@@ -29,7 +29,7 @@ class CNNModel:
         self.mean = tf.convert_to_tensor(mean, dtype = tf.float32, name='mean')
         self.std = tf.convert_to_tensor(std, dtype = tf.float32, name='std')
         # TODO : Normalize the input i.e. (input-mean)/std
-        self.x = #TODO
+        self.x = (self.X - self.mean)/self.std
         print('regularization_dim: ', self.x.shape)
         '''
         MODEL: The following operations define the model of the neural network.
@@ -51,7 +51,7 @@ class CNNModel:
         self.conv3  = tf.keras.layers.Conv2D(24, [4,4], strides=(2,2), padding='same', activation=tf.nn.relu, name='conv_3')(self.norm2)
         self.drop3  = tf.keras.layers.Dropout(self.dropout, name='dropout_cv3')(self.conv3, training=self.is_training )
         print('convolution_3_dim: ', self.conv3.shape)
-        self.flat   = tf.keras.layers.Flatten()(self.conv1)
+        self.flat   = tf.keras.layers.Flatten()(self.drop3)
         print('flat_dim: ', self.flat.shape)
         self.dense1 = tf.keras.layers.Dense(200, name='dense')(self.flat)
         print('dense_1_dim: ', self.dense1.shape)
@@ -59,7 +59,7 @@ class CNNModel:
         print('dropout_1_dim: ', self.drop4.shape)
         self.y_     = tf.keras.layers.Dense(classes, name='raw_output')(self.drop4)
         print('raw_output_dim: ', self.y_.shape)
-        self.pred = tf.nn.softmax(self.dense1, name='predictions')
+        self.pred = tf.nn.softmax(self.y_, name='predictions')
         print('prediction_dim: ', self.pred.shape)
         '''
         OPERATIONS: The following operation allows to train and evaluate the model
