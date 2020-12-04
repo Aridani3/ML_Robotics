@@ -1,0 +1,14 @@
+<launch>
+     <include file="$(find vrep_ros_teleop)/launch/teleop_mux.launch"/>
+
+    <node pkg="shore_follower" type="shore_follower_drive.py" name="shore_follower_drive" output="screen">
+      <param name="meta_file" value="$(find shore_follower)/models/nn/models/best_model.meta" />
+      <param name="model_file" value="$(find shore_follower)/models/nn/models/best_model" />
+      <!-- rotation speed corresponding to left or right commands -->
+      <param name="twist_factor" value="0.5" />
+      <param name="linear_vel" value="0.2" />
+
+      <remap from="/shore_follower_drive/image" to="/vrep/kisionSensor"/>
+      <remap from="/shore_follower_drive/twist" to="/arm_ik/twist"/>
+  </node>
+</launch>
