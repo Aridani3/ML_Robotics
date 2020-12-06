@@ -1,0 +1,13 @@
+<launch>
+
+ <node pkg="metal_detector" type="metal_detector_extract" name="metal_detector_extract" output="screen">
+      <remap from="/metal_detector_extract/scans" to="/vrep/metalDetector"/>
+      <param name="treasure_frame" value="/Treasure2" />
+      <param name="/sensor_frame" value="/VSV/Tool"/>
+      <param name="out_dir" value="/tmp" />
+      <param name="min_displacement" value="0.01" />
+      <param name="min_measurement" value="0.1" />
+  </node>
+
+
+</launch>

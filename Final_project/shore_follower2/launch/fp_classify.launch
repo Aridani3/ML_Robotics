@@ -5,8 +5,8 @@
       <param name="meta_file" value="$(find shore_follower2)/models/nn/models/best_model.meta" />
       <param name="model_file" value="$(find shore_follower2)/models/nn/models/best_model" />
       <!-- rotation speed corresponding to left or right commands -->
-      <param name="twist_factor" value="0.5" />
-      <param name="linear_vel" value="0.2" />
+      <param name="twist_factor" value="0.75" />
+      <param name="linear_vel" value="0.75" />
 
       <remap from="/shore_follower_drive2/image" to="/vrep/lineSensor"/>
       <remap from="/shore_follower_drive2/twist" to="/vsv_driver/twistCommand"/>

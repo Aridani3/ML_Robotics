@@ -14,8 +14,7 @@ class ShoreFollowerDrive:
     def __init__(self):
         self.model_file_ = rospy.get_param("~model_file")
         self.meta_file_ = rospy.get_param("~meta_file")
-        self.linear_vel_ = rospy.get_param('~linear_vel')
-        self.twist_factor_ = rospy.get_param('~twist_factor')
+        self.max_vel_ = rospy.get_param('~max_vel')
         
         self.sess_ = None
         self.load_model()
@@ -38,6 +37,9 @@ class ShoreFollowerDrive:
         processed_ = np.expand_dims(cv2.resize(raw, (0,0), fx = 32.0/data.height, fy=32.0/data.width, interpolation=cv2.INTER_AREA), axis=0)
         self.twist_pub_.publish(self.image_to_rot(processed_))
 
+    def sigmoid(self, x, a=15, b=0.8):
+        return 1 / (1 + np.exp(-a*(x-b)))
+
     def image_to_rot(self, img):
         # Reads the image, feed it to the network, get the predictions and act on it.
         out = Twist()
@@ -46,20 +48,22 @@ class ShoreFollowerDrive:
         # Makes sure that the shape of the network matches the required shape
         assert(res.shape[0] == 2)
         # Using the output of the network the robot is only able to loop around the inner shore anti clock wise (when the robot is already along the shore)
-        print("%5.2f %5.2f" %(res[0],res[1])) 
+        #print("%5.2f %5.2f" %(res[0],res[1])) 
         # The network never suggest to turn left, so we can't loop clock wise and to loop anti clock wise the robot has to already be along the shore
-        out.linear.x = 1.0
+        """
         if res[0] > 0.5:
-            out.angular.z = 0.15
+            out.linear.x = -0.15
         else:
-            out.angular.z = -0.15
-        print("x", out.linear.x, "y", out.linear.y, "z", out.linear.z, "ax", out.angular.x, "ay", out.angular.y, "az", out.angular.z)
+            out.linear.x = 0.15
+        """
+        out.linear.x = self.max_vel_* ( self.sigmoid(res[1]) - self.sigmoid(res[0]))
+        #print("x", out.linear.x, "y", out.linear.y, "z", out.linear.z, "ax", out.angular.x, "ay", out.angular.y, "az", out.angular.z)
         #TODO: Use the network output so the robot can drive around the lake
         # returns a geometry_msgs.Twist
         return out
 
 if __name__ == '__main__':
-        rospy.init_node('shore_follower_drive2', anonymous=True)
+        rospy.init_node('shore_follower_drive', anonymous=True)
         fp = ShoreFollowerDrive()
         rospy.spin()
 

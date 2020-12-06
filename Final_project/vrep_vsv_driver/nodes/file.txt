@@ -1,0 +1,40 @@
+        local data,w,h=sim.getVisionSensorCharImage(visionSensor)
+        sim.transformImage(data,{w,h},4)
+        
+        local d={}
+        d['header']={seq=0,stamp=simROS.getTime(), frame_id="Vision_sensor"}
+        d['height']=h
+        d['width']=w
+        d['encoding']='rgb8'
+        d['is_bigendian']=1
+        d['step']=w*3
+        d['data']=data
+        simROS.publish(visionSensorPub, d)
+        
+        view_angle = 3.14/4
+        viewing_angle_id = 1004
+        sim.getObjectFloatParameter(visionSensor, viewing_angle_id, view_angle)
+        f_x = (w/2)/math.tan(view_angle/2);
+        f_y = f_x;
+        ci={}
+        ci['header']=d['header']
+        ci['height']=h
+        ci['width']=w
+        ci['distortion_model']='PLUMB_BOB'
+        ci['D']={0, 0, 0, 0, 0}
+        ci['K']={f_x, 0, w/2, 0, f_y, h/2, 0, 0, 1}
+        ci['R']={1, 0, 0, 0, 1, 0, 0, 0, 1}
+        ci['P']={f_x, 0, w/2, 0, 0, f_y, h/2, 0, 0, 0, 1, 0}
+        ci['binning_x']= 1
+        ci['binning_y']= 1
+        ci['roi']= {x_offset=0, y_offset=0, width = 0, height = 0, do_rectify= false}
+        simROS.publish(visionSensorInfoPub, ci)
+        
+        data=sim.getVisionSensorDepthBuffer(visionSensor + sim.handleflag_codedstring 
+            + sim.handleflag_depthbuffermeters)
+        d['encoding']='32FC1'
+        d['is_bigendian']=0
+        d['step']=w*4
+        d['data']=data -- sim.transformBuffer(data,sim.buffer_float,1, 0,sim.buffer_float)
+        -- d['data']=sim.packFloatTable(data)
+        simROS.publish(depthSensorPub, d)

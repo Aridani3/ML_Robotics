@@ -1,0 +1,21 @@
+<launch>
+
+  <node pkg="nodelet" type="nodelet" name="nodelet_manager" output="screen" respawn="false" args="manager"/>
+
+  <node pkg="nodelet" type="nodelet" name="depth_to_pc" args="load depth_image_proc/point_cloud_xyzrgb nodelet_manager" respawn="false">
+    <remap from="rgb/image_rect_color" to="/vrep/kisionSensor"/>
+    <remap from="depth_registered/image_rect" to="/vrep/depthSensor"/>
+    <remap from="rgb/camera_info" to="/vrep/kisionSensorInfo"/>
+  </node>
+
+
+  <node pkg="nodelet" type="nodelet" name="depth_to_pc_4" args="load depth_image_proc/point_cloud_xyzrgb nodelet_manager" respawn="false">
+      <remap from="rgb/image_rect_color" to="/vrep/lineSensor"/>
+      <remap from="depth_registered/image_rect" to="/vrep//vrep/lineDepth"/>
+      <remap from="rgb/camera_info" to="/vrep/lineSensorInfo"/>
+      <remap from="depth_registered/points" to="/vrep/linePoints"/>
+  </node>
+
+  
+
+</launch>
